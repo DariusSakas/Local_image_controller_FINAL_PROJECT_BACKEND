@@ -2,6 +2,7 @@ package com.example.local_image_controller_final_project_backend.serializer;
 
 import com.example.local_image_controller_final_project_backend.model.AlbumModel;
 import com.example.local_image_controller_final_project_backend.model.ImageModel;
+import com.example.local_image_controller_final_project_backend.service.AlbumModelService;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.ObjectCodec;
@@ -13,6 +14,11 @@ import java.io.IOException;
 
 public class CustomImageModelJSONDeserializer extends StdDeserializer<ImageModel> {
 
+    private AlbumModelService albumModelService;
+
+    public CustomImageModelJSONDeserializer() {
+        this(null);
+    }
 
     protected CustomImageModelJSONDeserializer(Class<?> vc) {
         super(vc);
@@ -29,10 +35,17 @@ public class CustomImageModelJSONDeserializer extends StdDeserializer<ImageModel
         ObjectCodec codec = jsonParser.getCodec();
         JsonNode node = codec.readTree(jsonParser);
         //TODO: Set all node values for ImageModel object
+
+        JsonNode imageDescriptionNode = node.get("imageDescription");
+        JsonNode locationWhereImageWasTakenNode = node.get("locationWhereImageWasTaken");
+        JsonNode dateOfTakenImageNode = node.get("dateOfTakenImage");
         JsonNode albumModelNode = node.get("albumModel");
-        JsonNode
+
+        String imageDescription = imageDescriptionNode.asText();
+        String locationWhereImageWasTaken = locationWhereImageWasTakenNode.asText();
+        String dateOfTakenImage = dateOfTakenImageNode.asText();
         Long albumModelID = albumModelNode.asLong();
 
-        return new ImageModel(new AlbumModel(albumModelID, null ));
+        return new ImageModel(null, null, null, imageDescription, locationWhereImageWasTaken, dateOfTakenImage, new AlbumModel(albumModelID, null));
     }
 }

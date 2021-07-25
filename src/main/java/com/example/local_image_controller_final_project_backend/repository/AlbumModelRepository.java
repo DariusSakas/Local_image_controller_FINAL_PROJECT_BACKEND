@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface AlbumModelrepository extends JpaRepository<AlbumModel, Long> {
+public interface AlbumModelRepository extends JpaRepository<AlbumModel, Long> {
 
 }

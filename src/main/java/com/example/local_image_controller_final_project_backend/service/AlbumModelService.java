@@ -1,13 +1,18 @@
 package com.example.local_image_controller_final_project_backend.service;
 
-import com.example.local_image_controller_final_project_backend.repository.AlbumModelrepository;
+import com.example.local_image_controller_final_project_backend.model.AlbumModel;
+import com.example.local_image_controller_final_project_backend.repository.AlbumModelRepository;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AlbumModelService {
-    private final AlbumModelrepository albumModelrepository;
+    private final AlbumModelRepository albumModelrepository;
 
-    public AlbumModelService(AlbumModelrepository albumModelrepository) {
+    public AlbumModelService(AlbumModelRepository albumModelrepository) {
         this.albumModelrepository = albumModelrepository;
+    }
+
+    public void saveAlbumModelToDB(AlbumModel albumModel){
+        albumModelrepository.save(albumModel);
     }
 }

@@ -1,10 +1,13 @@
 package com.example.local_image_controller_final_project_backend.controller;
 
+import com.example.local_image_controller_final_project_backend.model.AlbumModel;
 import com.example.local_image_controller_final_project_backend.model.ImageModel;
-import com.example.local_image_controller_final_project_backend.repository.AlbumModelrepository;
+import com.example.local_image_controller_final_project_backend.repository.AlbumModelRepository;
+import com.example.local_image_controller_final_project_backend.serializer.CustomImageModelJSONDeserializer;
 import com.example.local_image_controller_final_project_backend.service.ImageModelService;
 import com.example.local_image_controller_final_project_backend.service.ImageStorageService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,9 +25,9 @@ public class ImageModelController {
 
     private final ImageModelService imageModelService;
     private final ImageStorageService imageStorageService;
-    private final AlbumModelrepository albumModelrepository;
+    private final AlbumModelRepository albumModelrepository;
 
-    public ImageModelController(ImageModelService imageModelService, ImageStorageService imageStorageService, AlbumModelrepository albumModelrepository) {
+    public ImageModelController(ImageModelService imageModelService, ImageStorageService imageStorageService, AlbumModelRepository albumModelrepository) {
         this.imageModelService = imageModelService;
         this.imageStorageService = imageStorageService;
         this.albumModelrepository = albumModelrepository;
@@ -35,19 +38,28 @@ public class ImageModelController {
      * Using Jackson library, JSON String is converted into ImageModel object and
      * sent for imageModelService Service layer to save Object to DB.
      *
-     * Tasks:
-     * 1. Autogenerate unique reference name
+     * TODO:
+     * 1. Autogenerate unique reference name +1 by adding same
+     * 2. Don't allow to upload image if Album doesn't exist
+     *
      */
     @PostMapping("/uploadImage")
     public ResponseEntity<String> uploadImage(@RequestParam("imageFile") MultipartFile imageFile, @RequestParam("imageModelJSON") String imageModelJSON) {
 
         ObjectMapper objectMapper = new ObjectMapper();
+        SimpleModule module = new SimpleModule();
+        module.addDeserializer(ImageModel.class, new CustomImageModelJSONDeserializer());
+        objectMapper.registerModule(module);
 
         try {
+
             ImageModel imageModel = objectMapper.readValue(imageModelJSON, ImageModel.class);
 
             imageModel.setImageFileStorageLocation(imageStorageService.saveImageToLocalStorage(imageFile, IMAGES_STORAGE_PATH, imageModel));
             imageModel.setImageThumbnailFileStorageLocation(imageStorageService.createThumbnailImage(IMAGES_STORAGE_PATH, THUMBNAIL_STORAGE_PATH));
+
+            System.out.println(imageModelJSON);
+            System.out.println(imageModel);
 
             imageModelService.saveImageDataToDB(imageModel);
 
