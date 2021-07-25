@@ -1,54 +1,93 @@
 package com.example.local_image_controller_final_project_backend.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import javax.persistence.*;
 
 @Entity
+@Table(name = "image_model")
 public class ImageModel {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "image_model_id")
     private Long id;
-    private String generatedImageFileName;
-//    private String imageFileLocation;
-//    private String imageThumbnailFileLocation;
-//    private String imageDescription;
-//    private String imageLocationWhereWasTaken;
-//    private String dateOfTakenImage;
-//    private String imageTags;
+    private String imageFileStorageLocation;
+    private String imageThumbnailFileStorageLocation;
+    private String imageDescription;
+    private String locationWhereImageWasTaken;
+    private String dateOfTakenImage;
+    /**
+     * The @ManyToOne side is always the Child association since it maps the underlying Foreign Key column.
+     * Use Cascade type only on parent, so when child is removed, parents is being kept.
+     */
 
+    @ManyToOne
+    @JoinColumn(name = "album_model_id", referencedColumnName = "album_model_id", insertable = false, updatable = false)
+    @JsonFormat(shape = JsonFormat.Shape.NUMBER)
+    private AlbumModel albumModel;
+
+    public void setImageFileStorageLocation(String imageFileStorageLocation) {
+        this.imageFileStorageLocation = imageFileStorageLocation;
+    }
+
+    public void setImageThumbnailFileStorageLocation(String imageThumbnailFileStorageLocation) {
+        this.imageThumbnailFileStorageLocation = imageThumbnailFileStorageLocation;
+    }
 
     public ImageModel() {
     }
 
-    public ImageModel(Long id, String generatedImageFileName) {
-        this.id = id;
-        this.generatedImageFileName = generatedImageFileName;
+    public ImageModel(AlbumModel albumModel) {
+        this.albumModel = albumModel;
     }
 
     public Long getId() {
         return id;
     }
 
+    public String getImageFileStorageLocation() {
+        return imageFileStorageLocation;
+    }
+
+    public String getImageThumbnailFileStorageLocation() {
+        return imageThumbnailFileStorageLocation;
+    }
+
+    public String getImageDescription() {
+        return imageDescription;
+    }
+
+    public String getLocationWhereImageWasTaken() {
+        return locationWhereImageWasTaken;
+    }
+
+    public String getDateOfTakenImage() {
+        return dateOfTakenImage;
+    }
+
+    public AlbumModel getAlbumModel() {
+        return albumModel;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }
 
-    public String getGeneratedImageFileName() {
-        return generatedImageFileName;
+    public void setImageDescription(String imageDescription) {
+        this.imageDescription = imageDescription;
     }
 
-    public void setGeneratedImageFileName(String generatedImageFileName) {
-        this.generatedImageFileName = generatedImageFileName;
+    public void setLocationWhereImageWasTaken(String locationWhereImageWasTaken) {
+        this.locationWhereImageWasTaken = locationWhereImageWasTaken;
     }
 
-    @Override
-    public String toString() {
-        return "ImageModel{" +
-                "id=" + id +
-                ", generatedImageFileName='" + generatedImageFileName + '\'' +
-                '}';
+    public void setDateOfTakenImage(String dateOfTakenImage) {
+        this.dateOfTakenImage = dateOfTakenImage;
+    }
+
+    public void setAlbumModel(AlbumModel albumModel) {
+        this.albumModel = albumModel;
     }
 }
