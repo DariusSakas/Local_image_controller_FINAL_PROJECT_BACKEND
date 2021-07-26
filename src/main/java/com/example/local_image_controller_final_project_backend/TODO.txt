@@ -1,0 +1,6 @@
+TODO:
+ 1. Autogenerate unique reference name +1 by adding same
+ 2. Don't allow to upload image if Album doesn't exist
+ 3. Lombok into getters and setters
+
+

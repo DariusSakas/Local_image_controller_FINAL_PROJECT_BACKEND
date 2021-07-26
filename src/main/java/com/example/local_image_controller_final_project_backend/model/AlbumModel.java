@@ -34,5 +34,11 @@ public class AlbumModel {
         this.id = id;
         this.albumName = albumName;
     }
+    public AlbumModel( String albumName) {
+
+        this.albumName = albumName;
+    }
+
+
 
 }

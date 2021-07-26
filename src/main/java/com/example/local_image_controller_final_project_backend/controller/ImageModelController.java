@@ -1,6 +1,5 @@
 package com.example.local_image_controller_final_project_backend.controller;
 
-import com.example.local_image_controller_final_project_backend.model.AlbumModel;
 import com.example.local_image_controller_final_project_backend.model.ImageModel;
 import com.example.local_image_controller_final_project_backend.repository.AlbumModelRepository;
 import com.example.local_image_controller_final_project_backend.serializer.CustomImageModelJSONDeserializer;
@@ -25,23 +24,16 @@ public class ImageModelController {
 
     private final ImageModelService imageModelService;
     private final ImageStorageService imageStorageService;
-    private final AlbumModelRepository albumModelrepository;
 
     public ImageModelController(ImageModelService imageModelService, ImageStorageService imageStorageService, AlbumModelRepository albumModelrepository) {
         this.imageModelService = imageModelService;
         this.imageStorageService = imageStorageService;
-        this.albumModelrepository = albumModelrepository;
-    }
+           }
 
     /**
      * API will request MultiPartFile 'imageFile' and String 'imageModelJSON' params with image file from client.
      * Using Jackson library, JSON String is converted into ImageModel object and
      * sent for imageModelService Service layer to save Object to DB.
-     *
-     * TODO:
-     * 1. Autogenerate unique reference name +1 by adding same
-     * 2. Don't allow to upload image if Album doesn't exist
-     *
      */
     @PostMapping("/uploadImage")
     public ResponseEntity<String> uploadImage(@RequestParam("imageFile") MultipartFile imageFile, @RequestParam("imageModelJSON") String imageModelJSON) {
@@ -52,7 +44,6 @@ public class ImageModelController {
         objectMapper.registerModule(module);
 
         try {
-
             ImageModel imageModel = objectMapper.readValue(imageModelJSON, ImageModel.class);
 
             imageModel.setImageFileStorageLocation(imageStorageService.saveImageToLocalStorage(imageFile, IMAGES_STORAGE_PATH, imageModel));
@@ -63,7 +54,6 @@ public class ImageModelController {
 
             imageModelService.saveImageDataToDB(imageModel);
 
-            //Common or seperate unique exceptions????????????????????????????
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>("Image and thumbnail upload failed", HttpStatus.BAD_REQUEST);

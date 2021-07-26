@@ -14,8 +14,6 @@ import java.io.IOException;
 
 public class CustomImageModelJSONDeserializer extends StdDeserializer<ImageModel> {
 
-    private AlbumModelService albumModelService;
-
     public CustomImageModelJSONDeserializer() {
         this(null);
     }
@@ -27,7 +25,7 @@ public class CustomImageModelJSONDeserializer extends StdDeserializer<ImageModel
     /**
      * Deserialization of JSON when is given only album id, not whole object.
      * Method brakes JSON into nodes by values.
-     * albumModel node is deserialized from id into new AlbumModel object with set id
+     * albumModel node Long id is deserialized into new AlbumModel object with that id set
      */
     @Override
     public ImageModel deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
