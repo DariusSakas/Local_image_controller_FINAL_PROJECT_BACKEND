@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -58,5 +59,11 @@ public class ImageStorageService implements LocalStorageComponent {
         System.out.println("Created new thumbnail file at: " + thumbnailFileLocation);
 
         return thumbnailFileLocation;
+    }
+
+    public void deleteImageAndThumbnailFromStorage(Path imagePath, Path thumbnailPath) throws IOException {
+        Files.deleteIfExists(imagePath);
+        Files.deleteIfExists(thumbnailPath);
+        System.out.printf("Successfully remove image at %s and thumbnail at %s \n", imagePath, thumbnailPath);
     }
 }

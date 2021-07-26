@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 @RestController
@@ -28,16 +30,23 @@ public class ImageModelController {
         this.imageStorageService = imageStorageService;
     }
 
+
+    @GetMapping
+    public ResponseEntity<List<ImageModel>> getAllImagesData() {
+        return new ResponseEntity<>(imageModelService.getAllImagesData(), HttpStatus.OK);
+    }
+
+    @GetMapping("/{imageId}")
+    public ResponseEntity<ImageModel> getImageModelById(@PathVariable(name = "imageId") Long id ){
+        ImageModel imageModel = imageModelService.getImageModelById(id);
+        return new ResponseEntity<>(imageModel, HttpStatus.OK);
+    }
+
     /**
      * API will request MultiPartFile 'imageFile' and String 'imageModelJSON' params with image file from client.
      * Using Jackson library, JSON String is converted into ImageModel object and
      * sent for imageModelService Service layer to save Object to DB.
      */
-
-    @GetMapping
-    public ResponseEntity<List<ImageModel>> getAllImagesData() {
-        return new ResponseEntity<>(imageModelService.findAllImagesData(), HttpStatus.OK);
-    }
 
     @PostMapping("/uploadImage")
     public ResponseEntity<String> uploadImage(@RequestParam("imageFile") MultipartFile imageFile, @RequestParam("imageModelJSON") String imageModelJSON) {
@@ -76,8 +85,19 @@ public class ImageModelController {
 
     @DeleteMapping("/{imageId}")
     public ResponseEntity<String> deleteImage(@PathVariable(name = "imageId") Long imageId){
-        imageModelService.deleteImageFromDB(imageId);
 
+        try {
+            ImageModel imageModel = imageModelService.getImageModelById(imageId);
+
+            Path imagePath = Paths.get(imageModel.getImageFileStorageLocation());
+            Path thumbnailPath = Paths.get(imageModel.getImageThumbnailFileStorageLocation());
+
+            imageStorageService.deleteImageAndThumbnailFromStorage(imagePath, thumbnailPath);
+            imageModelService.deleteImageFromDB(imageId);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
         return new ResponseEntity<>("Image removed", HttpStatus.OK);
     }
 }

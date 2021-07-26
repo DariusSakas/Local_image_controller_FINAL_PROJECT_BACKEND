@@ -20,11 +20,15 @@ public class ImageModelService  {
         imageModelRepository.save(imageModel);
     }
 
-    public List<ImageModel> findAllImagesData() {
+    public List<ImageModel> getAllImagesData() {
         return imageModelRepository.findAll();
     }
 
     public void deleteImageFromDB(Long imageId) {
         imageModelRepository.deleteById(imageId);
+    }
+
+    public ImageModel getImageModelById(Long id) {
+        return imageModelRepository.findById(id).orElse(null);
     }
 }
