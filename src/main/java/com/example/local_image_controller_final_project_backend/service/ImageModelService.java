@@ -16,13 +16,15 @@ public class ImageModelService  {
         this.imageModelRepository = imageModelRepository;
     }
 
-
     public void saveImageDataToDB(ImageModel imageModel) {
         imageModelRepository.save(imageModel);
     }
 
     public List<ImageModel> findAllImagesData() {
-        List<ImageModel> imageModelList = imageModelRepository.findAll();
-        return imageModelList;
+        return imageModelRepository.findAll();
+    }
+
+    public void deleteImageFromDB(Long imageId) {
+        imageModelRepository.deleteById(imageId);
     }
 }

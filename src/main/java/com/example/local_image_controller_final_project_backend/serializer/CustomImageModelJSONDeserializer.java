@@ -2,7 +2,6 @@ package com.example.local_image_controller_final_project_backend.serializer;
 
 import com.example.local_image_controller_final_project_backend.model.AlbumModel;
 import com.example.local_image_controller_final_project_backend.model.ImageModel;
-import com.example.local_image_controller_final_project_backend.service.AlbumModelService;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.ObjectCodec;

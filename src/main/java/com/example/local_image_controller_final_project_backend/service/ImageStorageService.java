@@ -43,16 +43,6 @@ public class ImageStorageService implements LocalStorageComponent {
         return imagesStoragePath + currentFileName;
     }
 
-//    private String generateImageName(ImageModel imageModel) {
-//
-//        return String.format("%d_%s_%s_%d",
-//                ofNullable(imageModel.getId()).orElse(1L),
-//                ofNullable(imageModel.getDateOfTakenImage()).orElse(""),
-//                ofNullable(imageModel.getLocationWhereImageWasTaken()).orElse(""),
-//                ofNullable(imageModel.getAlbumModel().getId()).orElse(1L)
-//        );
-//    }
-
     /**
      * createThumbnailImage method uses Thumblinator (Thumbnails.of()) to convert uploaded image file into small size thumbnail
      * returns String path to that thumbnail

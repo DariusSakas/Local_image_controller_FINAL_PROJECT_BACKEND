@@ -21,4 +21,12 @@ public class AlbumModelService {
     public List<AlbumModel> getAllAlbums() {
         return albumModelrepository.findAll();
     }
+
+    public void updateAlbum(AlbumModel albumModel) {
+        albumModelrepository.save(albumModel);
+    }
+
+    public void deleteAlbum(Long albumId) {
+        albumModelrepository.deleteById(albumId);
+    }
 }
