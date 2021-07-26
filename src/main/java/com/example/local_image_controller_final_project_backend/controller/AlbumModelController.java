@@ -20,11 +20,9 @@ public class AlbumModelController {
     }
 
     @PostMapping("/createAlbum")
-    public void saveAlbumModelToDB ( AlbumModel albumModel){
+    public void saveAlbumModelToDB (@RequestBody AlbumModel albumModel){
         System.out.println(albumModel.toString());
         albumModelService.saveAlbumModelToDB(albumModel);
     }
-
-
 
 }
