@@ -2,6 +2,7 @@ package com.example.local_image_controller_final_project_backend.service;
 
 import antlr.StringUtils;
 import com.example.local_image_controller_final_project_backend.component.LocalStorageComponent;
+import com.example.local_image_controller_final_project_backend.exceptions.ImageFileToDownloadNotFound;
 import com.example.local_image_controller_final_project_backend.localStoragePath.LocalStoragePath;
 import com.example.local_image_controller_final_project_backend.model.ImageModel;
 import com.example.local_image_controller_final_project_backend.repository.ImageModelRepository;
@@ -92,8 +93,8 @@ public class ImageStorageService implements LocalStorageComponent {
     public String createThumbnailImage(String imagesStoragePath, String thumbnailStoragePath) throws Exception {
         File newThumbnailFile = new File(thumbnailStoragePath);
 
-        Thumbnails.of(String.format("%s/%s", imagesStoragePath, currentFileName)).size(250, 250).toFiles(newThumbnailFile, Rename.PREFIX_HYPHEN_THUMBNAIL);
-        String thumbnailFileLocation = thumbnailStoragePath + "/thumbnail-" + currentFileName;
+        Thumbnails.of(String.format("%s/%s", imagesStoragePath, getCurrentFileName())).size(250, 250).toFiles(newThumbnailFile, Rename.PREFIX_HYPHEN_THUMBNAIL);
+        String thumbnailFileLocation = thumbnailStoragePath + "/thumbnail-" + getCurrentFileName();
 
         System.out.println("Created new thumbnail file at: " + thumbnailFileLocation);
 
@@ -105,4 +106,17 @@ public class ImageStorageService implements LocalStorageComponent {
         Files.deleteIfExists(thumbnailPath);
         System.out.printf("Successfully remove image at %s and thumbnail at %s \n", imagePath, thumbnailPath);
     }
+
+//    public File getImageToDownload(String imageFilePath) throws ImageFileToDownloadNotFound {
+//       try{
+//           File imageToDownload = new File(imageFilePath);
+//           if (imageToDownload.exists()){
+//               return imageToDownload;
+//           }else {
+//               throw new ImageFileToDownloadNotFound("Couldn't find file at " + imageFilePath);
+//           }
+//       }catch (Exception e){
+//           throw new ImageFileToDownloadNotFound("Couldn't find file at " + imageFilePath, e);
+//       }
+//    }
 }

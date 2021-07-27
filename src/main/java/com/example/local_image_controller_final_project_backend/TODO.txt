@@ -6,4 +6,5 @@ TODO:
  *Use serializer or not??? JSON with or without AlbumModel object????
  */rsv/ path???
  *LocalStoragePath to model folder// change to enum?????
-
+ *Check if imageFile name contains any symbols like .. or / and etc. Delete them if so.
+ * Implement Logger??????

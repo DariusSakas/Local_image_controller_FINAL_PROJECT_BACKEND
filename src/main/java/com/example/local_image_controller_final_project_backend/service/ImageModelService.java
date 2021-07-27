@@ -31,4 +31,9 @@ public class ImageModelService  {
     public ImageModel getImageModelById(Long id) {
         return imageModelRepository.findById(id).orElse(null);
     }
+
+    public String getImagePathById(Long imageFileId) {
+        ImageModel imageModel = imageModelRepository.getById(imageFileId);
+        return imageModel.getImageFileStorageLocation();
+    }
 }
