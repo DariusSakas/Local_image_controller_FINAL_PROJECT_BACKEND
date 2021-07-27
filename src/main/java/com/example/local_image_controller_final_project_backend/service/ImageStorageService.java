@@ -28,43 +28,54 @@ public class ImageStorageService implements LocalStorageComponent {
 
     private static String currentFileName;
 
+    public static String getCurrentFileName() {
+        return currentFileName;
+    }
+
+    public static void setCurrentFileName(String currentFileName) {
+        ImageStorageService.currentFileName = currentFileName;
+    }
+
     /**
      * saveImageToLocalStorage method coverts uploaded image into bytes and saves it at chosen path + name
      * returns String path to that image. CurrentFileName is checked with existing files and regenerated
      */
 
     public String saveImageToLocalStorage(MultipartFile imageFile, String imagesStoragePath) throws Exception {
-        currentFileName = generateImageFileName(imagesStoragePath, imageFile.getOriginalFilename());
+
+        setCurrentFileName(generateImageFileName(imagesStoragePath, imageFile.getOriginalFilename()));
 
         byte[] imageBytes = imageFile.getBytes();
-        Path imagePath = Paths.get(imagesStoragePath + currentFileName);
+        Path imagePath = Paths.get(imagesStoragePath + getCurrentFileName());
         Files.write(imagePath, imageBytes);
 
-        System.out.println("Current file name: " + imagesStoragePath + currentFileName);
+        System.out.println("Current file name: " + imagesStoragePath + getCurrentFileName());
 
-        return imagesStoragePath + currentFileName;
+        return imagesStoragePath + getCurrentFileName();
     }
 
     /**
      * Method checks originalImageFileName with existing files in localStorage by given imageStoragePath.
      * If any match exist - originalImageFileName is edited by adding counter before .jpg ending.
-     *
      */
+
     private String generateImageFileName(String imageStoragePath, String originalImageFileName) throws IOException {
+
         int counter = 0;
-        boolean matchFound = getAnyMatchInStorage(imageStoragePath, originalImageFileName);
+        List<String> allImagesList = getAllImagesList(imageStoragePath);
+        boolean matchFound = getAnyMatchInStorage(allImagesList, originalImageFileName);
+
         while (matchFound) {
             counter++;
             String editedImageFileName = StringUtils.stripBack(originalImageFileName, ".jpg") + counter + ".jpg";
-            if (!getAnyMatchInStorage(imageStoragePath, editedImageFileName)) {
+            if (!getAnyMatchInStorage(allImagesList, editedImageFileName)) {
                 return editedImageFileName;
             }
         }
         return originalImageFileName;
     }
 
-    private boolean getAnyMatchInStorage(String imageStoragePath, String originalFileName) throws IOException {
-        List<String> list = getAllImagesList(imageStoragePath);
+    private boolean getAnyMatchInStorage(List<String> list, String originalFileName) throws IOException {
         return list.stream().anyMatch(e -> e.endsWith(originalFileName));
     }
 
@@ -94,6 +105,4 @@ public class ImageStorageService implements LocalStorageComponent {
         Files.deleteIfExists(thumbnailPath);
         System.out.printf("Successfully remove image at %s and thumbnail at %s \n", imagePath, thumbnailPath);
     }
-
-
 }
