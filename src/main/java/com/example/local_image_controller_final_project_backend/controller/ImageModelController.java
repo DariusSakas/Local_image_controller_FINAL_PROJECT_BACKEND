@@ -1,5 +1,6 @@
 package com.example.local_image_controller_final_project_backend.controller;
 
+import com.example.local_image_controller_final_project_backend.localStoragePath.LocalStoragePath;
 import com.example.local_image_controller_final_project_backend.model.ImageModel;
 import com.example.local_image_controller_final_project_backend.repository.AlbumModelRepository;
 import com.example.local_image_controller_final_project_backend.service.ImageModelService;
@@ -18,10 +19,6 @@ import java.util.List;
 @RequestMapping("/images")
 public class ImageModelController {
 
-    //Drop to service layer???????????????????????????????
-    private static final String THUMBNAIL_STORAGE_PATH = "src/main/resources/thumbnails";
-    private static final String IMAGES_STORAGE_PATH = "src/main/resources/images/";
-
     private final ImageModelService imageModelService;
     private final ImageStorageService imageStorageService;
 
@@ -29,7 +26,6 @@ public class ImageModelController {
         this.imageModelService = imageModelService;
         this.imageStorageService = imageStorageService;
     }
-
 
     @GetMapping
     public ResponseEntity<List<ImageModel>> getAllImagesData() {
@@ -51,18 +47,14 @@ public class ImageModelController {
     @PostMapping("/uploadImage")
     public ResponseEntity<String> uploadImage(@RequestParam("imageFile") MultipartFile imageFile, @RequestParam("imageModelJSON") String imageModelJSON) {
 
-        //Drop to separate method here??????????
+        //Drop to constructor as dependency inj?????????
         ObjectMapper objectMapper = new ObjectMapper();
-
-//        SimpleModule module = new SimpleModule();
-//        module.addDeserializer(ImageModel.class, new FullImageModelJSONDeserializer());
-//        objectMapper.registerModule(module);
 
         try {
             ImageModel imageModel = objectMapper.readValue(imageModelJSON, ImageModel.class);
 
-            imageModel.setImageFileStorageLocation(imageStorageService.saveImageToLocalStorage(imageFile, IMAGES_STORAGE_PATH, imageModel));
-            imageModel.setImageThumbnailFileStorageLocation(imageStorageService.createThumbnailImage(IMAGES_STORAGE_PATH, THUMBNAIL_STORAGE_PATH));
+            imageModel.setImageFileStorageLocation(imageStorageService.saveImageToLocalStorage(imageFile, LocalStoragePath.getImagesStoragePath()));
+            imageModel.setImageThumbnailFileStorageLocation(imageStorageService.createThumbnailImage(LocalStoragePath.getImagesStoragePath(), LocalStoragePath.getThumbnailStoragePath()));
 
             System.out.println(imageModelJSON);
             System.out.println(imageModel);

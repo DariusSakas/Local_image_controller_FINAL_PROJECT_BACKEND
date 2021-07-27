@@ -1,6 +1,8 @@
 package com.example.local_image_controller_final_project_backend.service;
 
+import antlr.StringUtils;
 import com.example.local_image_controller_final_project_backend.component.LocalStorageComponent;
+import com.example.local_image_controller_final_project_backend.localStoragePath.LocalStoragePath;
 import com.example.local_image_controller_final_project_backend.model.ImageModel;
 import com.example.local_image_controller_final_project_backend.repository.ImageModelRepository;
 import net.coobird.thumbnailator.Thumbnails;
@@ -9,39 +11,66 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class ImageStorageService implements LocalStorageComponent {
     /**
      * ImageStorageService responsible for CRUD operations image and thumbnail files stored locally
      */
-    private final ImageModelRepository imageModelRepository;
 
     private static String currentFileName;
 
-    public ImageStorageService(ImageModelRepository imageModelRepository) {
-        this.imageModelRepository = imageModelRepository;
-    }
-
     /**
      * saveImageToLocalStorage method coverts uploaded image into bytes and saves it at chosen path + name
-     * returns String path to that image
+     * returns String path to that image. CurrentFileName is checked with existing files and regenerated
      */
-    @Override
-    public String saveImageToLocalStorage(MultipartFile imageFile, String imagesStoragePath, ImageModel imageModel) throws Exception {
-//        String generatedImageName = generateImageName(imageModel);
+
+    public String saveImageToLocalStorage(MultipartFile imageFile, String imagesStoragePath) throws Exception {
+        currentFileName = generateImageFileName(imagesStoragePath, imageFile.getOriginalFilename());
 
         byte[] imageBytes = imageFile.getBytes();
-        Path imagePath = Paths.get(imagesStoragePath + imageFile.getOriginalFilename());
+        Path imagePath = Paths.get(imagesStoragePath + currentFileName);
+        Files.write(imagePath, imageBytes);
 
-        currentFileName = Files.write(imagePath, imageBytes).getFileName().toString();
         System.out.println("Current file name: " + imagesStoragePath + currentFileName);
 
         return imagesStoragePath + currentFileName;
+    }
+
+    /**
+     * Method checks originalImageFileName with existing files in localStorage by given imageStoragePath.
+     * If any match exist - originalImageFileName is edited by adding counter before .jpg ending.
+     *
+     */
+    private String generateImageFileName(String imageStoragePath, String originalImageFileName) throws IOException {
+        int counter = 0;
+        boolean matchFound = getAnyMatchInStorage(imageStoragePath, originalImageFileName);
+        while (matchFound) {
+            counter++;
+            String editedImageFileName = StringUtils.stripBack(originalImageFileName, ".jpg") + counter + ".jpg";
+            if (!getAnyMatchInStorage(imageStoragePath, editedImageFileName)) {
+                return editedImageFileName;
+            }
+        }
+        return originalImageFileName;
+    }
+
+    private boolean getAnyMatchInStorage(String imageStoragePath, String originalFileName) throws IOException {
+        List<String> list = getAllImagesList(imageStoragePath);
+        return list.stream().anyMatch(e -> e.endsWith(originalFileName));
+    }
+
+    public List<String> getAllImagesList(String imageStoragePath) throws IOException {
+        Path path = Paths.get(imageStoragePath);
+        return Files.walk(path).filter(Files::isRegularFile).map(Path::toString).collect(Collectors.toList());
     }
 
     /**
@@ -49,7 +78,6 @@ public class ImageStorageService implements LocalStorageComponent {
      * returns String path to that thumbnail
      */
 
-    @Override
     public String createThumbnailImage(String imagesStoragePath, String thumbnailStoragePath) throws Exception {
         File newThumbnailFile = new File(thumbnailStoragePath);
 
@@ -66,4 +94,6 @@ public class ImageStorageService implements LocalStorageComponent {
         Files.deleteIfExists(thumbnailPath);
         System.out.printf("Successfully remove image at %s and thumbnail at %s \n", imagePath, thumbnailPath);
     }
+
+
 }
