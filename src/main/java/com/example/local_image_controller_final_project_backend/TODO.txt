@@ -8,3 +8,5 @@ TODO:
  *LocalStoragePath to model folder// change to enum?????
  *Check if imageFile name contains any symbols like .. or / and etc. Delete them if so.
  * Implement Logger??????
+ * Implement thumbnail download by id
+ *MediaType returns Optional of nullable. Do need additional try/catch??
