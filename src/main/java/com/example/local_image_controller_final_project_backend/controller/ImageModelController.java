@@ -1,6 +1,5 @@
 package com.example.local_image_controller_final_project_backend.controller;
 
-import com.example.local_image_controller_final_project_backend.exceptions.ImageFileToDownloadNotFound;
 import com.example.local_image_controller_final_project_backend.localStoragePath.LocalStoragePath;
 import com.example.local_image_controller_final_project_backend.model.ImageModel;
 import com.example.local_image_controller_final_project_backend.repository.AlbumModelRepository;
@@ -13,7 +12,6 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;

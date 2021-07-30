@@ -1,28 +1,21 @@
 package com.example.local_image_controller_final_project_backend.service;
 
 import antlr.StringUtils;
-import com.example.local_image_controller_final_project_backend.component.LocalStorageComponent;
-import com.example.local_image_controller_final_project_backend.exceptions.ImageFileToDownloadNotFound;
-import com.example.local_image_controller_final_project_backend.localStoragePath.LocalStoragePath;
-import com.example.local_image_controller_final_project_backend.model.ImageModel;
-import com.example.local_image_controller_final_project_backend.repository.ImageModelRepository;
 import net.coobird.thumbnailator.Thumbnails;
 import net.coobird.thumbnailator.name.Rename;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
-public class ImageStorageService implements LocalStorageComponent {
+public class ImageStorageService {
     /**
      * ImageStorageService responsible for CRUD operations image and thumbnail files stored locally
      */
@@ -68,7 +61,9 @@ public class ImageStorageService implements LocalStorageComponent {
 
         while (matchFound) {
             counter++;
-            String editedImageFileName = StringUtils.stripBack(originalImageFileName, ".jpg") + counter + ".jpg";
+            //removing all symbols like / or . and etc. from string and adding .jpg ending:
+            originalImageFileName = originalImageFileName.replaceAll("\\W+","");
+            String editedImageFileName = StringUtils.stripBack(originalImageFileName, "jpg") + counter + ".jpg";
             if (!getAnyMatchInStorage(allImagesList, editedImageFileName)) {
                 return editedImageFileName;
             }
