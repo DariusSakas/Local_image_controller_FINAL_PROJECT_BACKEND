@@ -25,4 +25,40 @@ public class RoleModel {
             inverseJoinColumns = @JoinColumn(
                     name = "privilege_id", referencedColumnName = "id"))
     private Collection<PrivilegeModel> privileges;
+
+    public RoleModel(String name) {
+        this.name = name;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Collection<UserModel> getUsers() {
+        return users;
+    }
+
+    public void setUsers(Collection<UserModel> users) {
+        this.users = users;
+    }
+
+    public Collection<PrivilegeModel> getPrivileges() {
+        return privileges;
+    }
+
+    public void setPrivileges(Collection<PrivilegeModel> privileges) {
+        this.privileges = privileges;
+    }
 }

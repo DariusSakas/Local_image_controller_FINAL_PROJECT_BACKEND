@@ -46,6 +46,13 @@ public class UserModel implements UserDetails {
         this.password = password;
     }
 
+    public Collection<RoleModel> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Collection<RoleModel> roles) {
+        this.roles = roles;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

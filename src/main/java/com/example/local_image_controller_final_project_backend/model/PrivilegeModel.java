@@ -14,4 +14,8 @@ public class PrivilegeModel {
 
     @ManyToMany(mappedBy = "privileges")
     private Collection<RoleModel> roles;
+
+    public PrivilegeModel(String name) {
+
+    }
 }
