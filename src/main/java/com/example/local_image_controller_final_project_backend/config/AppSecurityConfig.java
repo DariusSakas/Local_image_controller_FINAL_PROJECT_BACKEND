@@ -12,7 +12,6 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
-@EnableWebSecurity
 public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserModelService userModelService;
 
@@ -32,7 +31,7 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests().antMatchers("/register")
                 .permitAll() .anyRequest().authenticated()
                 .and()
-                .formLogin() .loginPage("/login")
+                .formLogin() .loginPage("/login.html")
                 .permitAll()
                 .and()
                 .logout() .invalidateHttpSession(true)
