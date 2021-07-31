@@ -26,8 +26,24 @@ public class RoleModel {
                     name = "privilege_id", referencedColumnName = "id"))
     private Collection<PrivilegeModel> privileges;
 
+    public RoleModel() {
+    }
+
     public RoleModel(String name) {
         this.name = name;
+    }
+
+    public RoleModel(String name, Collection<UserModel> users, Collection<PrivilegeModel> privileges) {
+        this.name = name;
+        this.users = users;
+        this.privileges = privileges;
+    }
+
+    public RoleModel(Long id, String name, Collection<UserModel> users, Collection<PrivilegeModel> privileges) {
+        this.id = id;
+        this.name = name;
+        this.users = users;
+        this.privileges = privileges;
     }
 
     public Long getId() {

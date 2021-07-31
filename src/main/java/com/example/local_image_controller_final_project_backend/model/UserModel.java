@@ -21,6 +21,22 @@ public class UserModel implements UserDetails {
     private String username;
     private String password;
 
+    public UserModel() {
+    }
+
+    public UserModel(String username, String password, Collection<RoleModel> roles) {
+        this.username = username;
+        this.password = password;
+        this.roles = roles;
+    }
+
+    public UserModel(Long id, String username, String password, Collection<RoleModel> roles) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.roles = roles;
+    }
+
     @ManyToMany
     @JoinTable(
             name = "users_roles",

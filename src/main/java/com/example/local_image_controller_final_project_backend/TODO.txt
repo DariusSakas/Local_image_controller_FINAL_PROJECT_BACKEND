@@ -9,3 +9,4 @@ TODO:
  * Implement Logger??????
  * Implement thumbnail download by id
  * MediaType returns Optional of nullable. Do need additional try/catch??
+ * JPQL??????

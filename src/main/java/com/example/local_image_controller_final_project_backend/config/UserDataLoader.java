@@ -9,6 +9,7 @@ import com.example.local_image_controller_final_project_backend.repository.UserM
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextClosedEvent;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +20,8 @@ import java.util.Collections;
 import java.util.List;
 
 @Component
-public class UserDataLoader implements ApplicationListener<ContextClosedEvent> {
+public class UserDataLoader implements ApplicationListener<ContextRefreshedEvent> {
+
     private boolean alreadySetup = false;
 
     private UserModelRepository userModelRepository;
@@ -49,7 +51,7 @@ public class UserDataLoader implements ApplicationListener<ContextClosedEvent> {
 
 
     @Override
-    public void onApplicationEvent(ContextClosedEvent contextClosedEvent) {
+    public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
         if (alreadySetup)
             return;
         PrivilegeModel readPrivilege
@@ -64,9 +66,10 @@ public class UserDataLoader implements ApplicationListener<ContextClosedEvent> {
 
         RoleModel adminRole = roleModelRepository.findByName("ROLE_ADMIN");
         UserModel user = new UserModel();
-        user.setUsername("Test");
-        user.setPassword(passwordEncoder.encode("test"));
+        user.setUsername("admin");
+        user.setPassword(passwordEncoder.encode("admin"));
         user.setRoles(Collections.singletonList(adminRole));
+        System.out.println(user);
         userModelRepository.save(user);
 
         alreadySetup = true;
@@ -80,11 +83,12 @@ public class UserDataLoader implements ApplicationListener<ContextClosedEvent> {
             privilege = new PrivilegeModel(name);
             privilegeModelRepository.save(privilege);
         }
+        System.out.println(privilege);
         return privilege;
     }
 
     @Transactional
-    RoleModel createRoleIfNotFound(
+    public RoleModel createRoleIfNotFound(
             String name, Collection<PrivilegeModel> privileges) {
 
         RoleModel role = roleModelRepository.findByName(name);
@@ -93,7 +97,7 @@ public class UserDataLoader implements ApplicationListener<ContextClosedEvent> {
             role.setPrivileges(privileges);
             roleModelRepository.save(role);
         }
+        System.out.println(role);
         return role;
     }
-
 }
