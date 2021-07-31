@@ -1,9 +1,7 @@
 TODO:
- * Don't allow uploading image if Album doesn't exist
- * AlbumModelService implement check if Album already exists when updating
- * AlbumModelService implement check if Album already exist when creating new Album
-   Throw exceptions?????
- * Use serializer or not??? JSON with or without AlbumModel object????
- * Implement Logger?????? Optional
- * MediaType returns Optional of nullable. Do need additional try/catch??
+ *Implement Logger?????? Optional
+ *Mark models
+ *Add info next to methods/clean each class
+ *Login/Register API
+
 
