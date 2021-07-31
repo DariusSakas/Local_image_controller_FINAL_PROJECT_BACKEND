@@ -4,9 +4,6 @@ TODO:
  * AlbumModelService implement check if Album already exist when creating new Album
    Throw exceptions?????
  * Use serializer or not??? JSON with or without AlbumModel object????
- * /rsv/ path???
- * LocalStoragePath to model folder// change to enum?????
- * Implement Logger??????
- * Implement thumbnail download by id
+ * Implement Logger?????? Optional
  * MediaType returns Optional of nullable. Do need additional try/catch??
- * JPQL??????
+

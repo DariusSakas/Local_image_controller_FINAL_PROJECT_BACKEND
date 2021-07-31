@@ -13,8 +13,6 @@ import java.util.List;
 @Table(name = "user_model")
 public class UserModel implements UserDetails {
 
-    private final String ROLE_PREFIX = "ROLE_";
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
