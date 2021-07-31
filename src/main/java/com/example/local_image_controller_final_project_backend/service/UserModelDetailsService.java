@@ -19,11 +19,11 @@ import java.util.Collection;
 import java.util.List;
 
 @Service
-public class UserModelService implements UserDetailsService {
+public class UserModelDetailsService implements UserDetailsService {
 
     private final UserModelRepository userRepository;
 
-    public UserModelService(UserModelRepository userRepository) {
+    public UserModelDetailsService(UserModelRepository userRepository) {
         this.userRepository = userRepository;
     }
 
