@@ -1,9 +1,6 @@
 package com.example.local_image_controller_final_project_backend.model;
 
-import org.springframework.security.core.userdetails.User;
-
 import javax.persistence.*;
-import java.util.Collection;
 
 @Entity
 @Table(name = "role_model")
@@ -12,38 +9,16 @@ public class RoleModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
 
-    @ManyToMany(mappedBy = "roles")
-    private Collection<UserModel> users;
-
-    @ManyToMany
-    @JoinTable(
-            name = "roles_privileges",
-            joinColumns = @JoinColumn(
-                    name = "role_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(
-                    name = "privilege_id", referencedColumnName = "id"))
-    private Collection<PrivilegeModel> privileges;
+    @Enumerated(EnumType.STRING)
+    private ERole name;
 
     public RoleModel() {
     }
 
-    public RoleModel(String name) {
-        this.name = name;
-    }
-
-    public RoleModel(String name, Collection<UserModel> users, Collection<PrivilegeModel> privileges) {
-        this.name = name;
-        this.users = users;
-        this.privileges = privileges;
-    }
-
-    public RoleModel(Long id, String name, Collection<UserModel> users, Collection<PrivilegeModel> privileges) {
+    public RoleModel(Long id, ERole name) {
         this.id = id;
         this.name = name;
-        this.users = users;
-        this.privileges = privileges;
     }
 
     public Long getId() {
@@ -54,27 +29,11 @@ public class RoleModel {
         this.id = id;
     }
 
-    public String getName() {
+    public ERole getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(ERole name) {
         this.name = name;
-    }
-
-    public Collection<UserModel> getUsers() {
-        return users;
-    }
-
-    public void setUsers(Collection<UserModel> users) {
-        this.users = users;
-    }
-
-    public Collection<PrivilegeModel> getPrivileges() {
-        return privileges;
-    }
-
-    public void setPrivileges(Collection<PrivilegeModel> privileges) {
-        this.privileges = privileges;
     }
 }
