@@ -18,4 +18,8 @@ public class PrivilegeModel {
     public PrivilegeModel(String name) {
 
     }
+
+    public PrivilegeModel() {
+
+    }
 }
