@@ -1,11 +1,13 @@
 package com.example.local_image_controller_final_project_backend.config;
 
+import com.example.local_image_controller_final_project_backend.exceptions.UserPrivelegesAndRolesException;
 import com.example.local_image_controller_final_project_backend.model.PrivilegeModel;
 import com.example.local_image_controller_final_project_backend.model.RoleModel;
 import com.example.local_image_controller_final_project_backend.model.UserModel;
 import com.example.local_image_controller_final_project_backend.repository.PrivilegeModelRepository;
 import com.example.local_image_controller_final_project_backend.repository.RoleModelRepository;
 import com.example.local_image_controller_final_project_backend.repository.UserModelRepository;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextClosedEvent;
@@ -50,29 +52,38 @@ public class UserDataLoader implements ApplicationListener<ContextRefreshedEvent
     }
 
 
+
     @Override
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
-        if (alreadySetup)
-            return;
-        PrivilegeModel readPrivilege
-                = createPrivilegeIfNotFound("READ_PRIVILEGE");
-        PrivilegeModel writePrivilege
-                = createPrivilegeIfNotFound("WRITE_PRIVILEGE");
+     try{
+         if (alreadySetup)
+             return;
+         PrivilegeModel readPrivilege
+                 = createPrivilegeIfNotFound("READ_PRIVILEGE");
+         PrivilegeModel writePrivilege
+                 = createPrivilegeIfNotFound("WRITE_PRIVILEGE");
 
-        List<PrivilegeModel> adminPrivileges = Arrays.asList(
-                readPrivilege, writePrivilege);
-        createRoleIfNotFound("ROLE_ADMIN", adminPrivileges);
-        createRoleIfNotFound("ROLE_USER", Collections.singletonList(readPrivilege));
+         List<PrivilegeModel> adminPrivileges = Arrays.asList(
+                 readPrivilege, writePrivilege);
+         createRoleIfNotFound("ROLE_ADMIN", adminPrivileges);
+         createRoleIfNotFound("ROLE_USER", Collections.singletonList(readPrivilege));
 
-        RoleModel adminRole = roleModelRepository.findByName("ROLE_ADMIN");
-        UserModel user = new UserModel();
-        user.setUsername("admin");
-        user.setPassword(passwordEncoder.encode("admin"));
-        user.setRoles(Collections.singletonList(adminRole));
-        System.out.println(user);
-        userModelRepository.save(user);
+         RoleModel adminRole = roleModelRepository.findByName("ROLE_ADMIN");
+         UserModel user = new UserModel();
+         user.setUsername("admin");
+         user.setPassword(passwordEncoder.encode("admin"));
+         user.setRoles(Collections.singletonList(adminRole));
+         System.out.println(user);
+         userModelRepository.save(user);
 
-        alreadySetup = true;
+         alreadySetup = true;
+     }catch (Exception e){
+         try {
+             throw new UserPrivelegesAndRolesException("User priveleges and role setup error");
+         } catch (UserPrivelegesAndRolesException ex) {
+             ex.printStackTrace();
+         }
+     }
     }
 
     @Transactional

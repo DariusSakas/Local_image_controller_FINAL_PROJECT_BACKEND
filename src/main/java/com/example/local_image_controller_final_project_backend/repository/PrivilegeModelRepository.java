@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PrivilegeModelRepository extends JpaRepository<PrivilegeModel, Long> {
-    @Query("select p from PrivilegeModel p where p.name like name)
+    @Query("select p from PrivilegeModel p where p.name like name ")
     PrivilegeModel findByName(@Param("name") String name);
 }
