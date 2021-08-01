@@ -3,6 +3,7 @@ package com.example.local_image_controller_final_project_backend.jwt;
 import com.example.local_image_controller_final_project_backend.exceptions.JWTValidationException;
 import com.example.local_image_controller_final_project_backend.service.UserModelDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,12 +19,20 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Component
+@Configuration
 public class JWTFilter extends OncePerRequestFilter {
 
-    @Autowired
     private JWTUtils jwtUtils;
-    @Autowired
     private  UserModelDetailsService userModelService;
+
+    public JWTFilter() {
+    }
+
+    public JWTFilter(JWTUtils jwtUtils, UserModelDetailsService userModelService) {
+        this.jwtUtils = jwtUtils;
+        this.userModelService = userModelService;
+    }
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {

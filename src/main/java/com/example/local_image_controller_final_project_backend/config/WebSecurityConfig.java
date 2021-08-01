@@ -23,13 +23,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserModelDetailsService userModelService;
+    private final JWTAuthentication unauthorizedHandler;
 
-    public WebSecurityConfig(UserModelDetailsService userModelService, JWTAuthentication unauthorizedHandler) {
+    public WebSecurityConfig(UserModelDetailsService userModelService,  JWTAuthentication unauthorizedHandler) {
         this.userModelService = userModelService;
         this.unauthorizedHandler = unauthorizedHandler;
     }
-
-    private final JWTAuthentication unauthorizedHandler;
 
     @Bean
     public JWTFilter authenticationJwtTokenFilter() {
