@@ -12,8 +12,10 @@ import java.util.Date;
 @Component
 public class JWTUtils {
 
+    //Key must be long enough - else Exception
     private String jwtSecretKey = "KJD#!2SADASjjw!3213";
-    private int jwtExpirationTimeMs = 1200;
+    //Expiration time in ms: (1 200 000 ms - 20min)
+    private int jwtExpirationTimeMs = 1200000;
 
     public String generateJwtToken(Authentication authentication) {
 

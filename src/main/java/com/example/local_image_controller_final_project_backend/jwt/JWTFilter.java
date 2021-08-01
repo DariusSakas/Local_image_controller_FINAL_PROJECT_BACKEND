@@ -19,20 +19,15 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Component
-@Configuration
 public class JWTFilter extends OncePerRequestFilter {
 
-    private JWTUtils jwtUtils;
+    @Autowired
+    private  JWTUtils jwtUtils;
+    @Autowired
     private  UserModelDetailsService userModelService;
 
     public JWTFilter() {
     }
-
-    public JWTFilter(JWTUtils jwtUtils, UserModelDetailsService userModelService) {
-        this.jwtUtils = jwtUtils;
-        this.userModelService = userModelService;
-    }
-
 
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
@@ -62,7 +57,7 @@ public class JWTFilter extends OncePerRequestFilter {
         String headerAuth = request.getHeader("Authorization");
 
         if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
-            return headerAuth.substring(7, headerAuth.length());
+            return headerAuth.substring(7);
         }
 
         return null;
