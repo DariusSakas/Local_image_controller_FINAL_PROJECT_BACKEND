@@ -57,7 +57,7 @@ public class UserModelAndAuthenticationController {
         UserModelImpl userDetails = (UserModelImpl) authentication.getPrincipal();
 
         List<String> roles = userDetails.getAuthorities().stream()
-                .map(item -> item.getAuthority())
+                .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
 
         return new ResponseEntity<>(new JWTResponse(
