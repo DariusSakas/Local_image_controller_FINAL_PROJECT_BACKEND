@@ -12,7 +12,7 @@ import java.util.Date;
 @Component
 public class JWTUtils {
 
-    private String jwtSecretKey = "key";
+    private String jwtSecretKey = "KJD#!2SADASjjw!3213";
     private int jwtExpirationTimeMs = 1200;
 
     public String generateJwtToken(Authentication authentication) {

@@ -20,16 +20,13 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/auth")
 public class UserModelAndAuthenticationController {
@@ -60,7 +57,7 @@ public class UserModelAndAuthenticationController {
         UserModelImpl userDetails = (UserModelImpl) authentication.getPrincipal();
 
         List<String> roles = userDetails.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
+                .map(item -> item.getAuthority())
                 .collect(Collectors.toList());
 
         return new ResponseEntity<>(new JWTResponse(
@@ -88,30 +85,31 @@ public class UserModelAndAuthenticationController {
 
         if (signUpRequestRole == null) {
             RoleModel userRole = roleModelService.findRoleByName(ERole.ROLE_USER)
-                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                    .orElseThrow(() -> new RuntimeException("EROOR! Role is not found at DB."));
             roles.add(userRole);
         } else {
             signUpRequestRole.forEach(role -> {
                 switch (role) {
                     case "admin":
                         RoleModel adminRole = roleModelService.findRoleByName(ERole.ROLE_ADMIN)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                                .orElseThrow(() -> new RuntimeException("EROOR! Role is not found at DB."));
                         roles.add(adminRole);
 
                         break;
                     case "mod":
                         RoleModel modRole = roleModelService.findRoleByName(ERole.ROLE_MODERATOR)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                                .orElseThrow(() -> new RuntimeException("EROOR! Role is not found at DB."));
                         roles.add(modRole);
 
                         break;
                     default:
                         RoleModel userRole = roleModelService.findRoleByName(ERole.ROLE_USER)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                                .orElseThrow(() -> new RuntimeException("EROOR! Role is not found at DB."));
                         roles.add(userRole);
                 }
             });
         }
+
 
         user.setRoles(roles);
         userModelService.saveUserToDB(user);
