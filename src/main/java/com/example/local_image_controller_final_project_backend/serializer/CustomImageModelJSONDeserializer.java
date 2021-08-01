@@ -33,16 +33,10 @@ public class CustomImageModelJSONDeserializer extends StdDeserializer<ImageModel
         JsonNode node = codec.readTree(jsonParser);
         //TODO: Set all node values for ImageModel object
 
-        JsonNode imageDescriptionNode = node.get("imageDescription");
-        JsonNode locationWhereImageWasTakenNode = node.get("locationWhereImageWasTaken");
-        JsonNode dateOfTakenImageNode = node.get("dateOfTakenImage");
-        JsonNode albumModelNode = node.get("albumModel");
+        JsonNode imageIDNode = node.get("id");
 
-        String imageDescription = imageDescriptionNode.asText();
-        String locationWhereImageWasTaken = locationWhereImageWasTakenNode.asText();
-        String dateOfTakenImage = dateOfTakenImageNode.asText();
-        Long albumModelID = albumModelNode.asLong();
+        Long imageModelID = imageIDNode.asLong();
 
-        return new ImageModel(null, null, null, imageDescription, locationWhereImageWasTaken, dateOfTakenImage, new AlbumModel(albumModelID, null));
+        return new ImageModel(imageModelID);
     }
 }

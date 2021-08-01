@@ -41,6 +41,10 @@ public class ImageModel {
     public ImageModel() {
     }
 
+    public ImageModel(Long id) {
+        this.id = id;
+    }
+
     //GETTERS:
 
     public Long getId() {

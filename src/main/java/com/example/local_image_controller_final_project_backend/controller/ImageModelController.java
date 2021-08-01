@@ -2,7 +2,6 @@ package com.example.local_image_controller_final_project_backend.controller;
 
 import com.example.local_image_controller_final_project_backend.config.LocalStoragePath;
 import com.example.local_image_controller_final_project_backend.exceptions.ImageModelDataNotFound;
-import com.example.local_image_controller_final_project_backend.exceptions.UnableToSaveImageModelDataToDB;
 import com.example.local_image_controller_final_project_backend.model.ImageModel;
 import com.example.local_image_controller_final_project_backend.repository.AlbumModelRepository;
 import com.example.local_image_controller_final_project_backend.service.ImageModelService;
@@ -15,6 +14,7 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -95,6 +95,7 @@ public class ImageModelController {
             Arrays.stream(imageFiles).forEach(multipartFile -> {
                 try {
                     saveImageToStorageAndModelToDB(multipartFile, imageModelJSON);
+
                 } catch (Exception e) {
                     e.printStackTrace();
                     System.out.println("Unable to save image model data to DB");
@@ -111,8 +112,7 @@ public class ImageModelController {
      * Save single image and single thumbnail to storage
      */
     private void saveImageToStorageAndModelToDB(MultipartFile imageFile, String imageModelJSON) throws Exception {
-        ObjectMapper objectMapper = new ObjectMapper();
-        ImageModel imageModel = objectMapper.readValue(imageModelJSON, ImageModel.class);
+        ImageModel imageModel = mapJsonIntoImageModel(imageModelJSON);
 
         imageModel.setImageFileStorageLocation(imageStorageService.saveImageToLocalStorage(imageFile, LocalStoragePath.getImagesStoragePath()));
         imageModel.setImageThumbnailFileStorageLocation(imageStorageService.createThumbnailImage(LocalStoragePath.getImagesStoragePath(), LocalStoragePath.getThumbnailStoragePath()));
@@ -121,7 +121,13 @@ public class ImageModelController {
         System.out.println(imageModel);
 
         imageModelService.saveImageDataToDB(imageModel);
+
     }
+
+    private ImageModel mapJsonIntoImageModel(String imageModelJSON) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        return  objectMapper.readValue(imageModelJSON, ImageModel.class);
+        }
 
     /**
      * Update existing image data in DB
@@ -145,17 +151,21 @@ public class ImageModelController {
     public ResponseEntity<String> deleteImage(@PathVariable(name = "imageId") Long imageId) {
 
         try {
-            ImageModel imageModel = imageModelService.getImageModelById(imageId);
-
-            Path imagePath = Paths.get(imageModel.getImageFileStorageLocation());
-            Path thumbnailPath = Paths.get(imageModel.getImageThumbnailFileStorageLocation());
-
-            imageStorageService.deleteImageAndThumbnailFromStorage(imagePath, thumbnailPath);
-            imageModelService.deleteImageFromDB(imageId);
+            deleteImageAndThumbnailFromStorage(imageId);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>("Image removed", HttpStatus.OK);
+    }
+
+    private void deleteImageAndThumbnailFromStorage(Long imageId) throws IOException {
+        ImageModel imageModel = imageModelService.getImageModelById(imageId);
+
+        Path imagePath = Paths.get(imageModel.getImageFileStorageLocation());
+        Path thumbnailPath = Paths.get(imageModel.getImageThumbnailFileStorageLocation());
+
+        imageStorageService.deleteImageAndThumbnailFromStorage(imagePath, thumbnailPath);
+        imageModelService.deleteImageFromDB(imageId);
     }
 }

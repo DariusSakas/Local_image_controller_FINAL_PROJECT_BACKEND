@@ -3,5 +3,5 @@ TODO:
  *Mark models
  *Add info next to methods/clean each class
  *Login/Register API
-
+ * On exeption postImage image is saved but data not. Remove image from storage
 
