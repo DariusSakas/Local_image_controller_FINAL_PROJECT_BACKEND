@@ -1,5 +1,6 @@
 package com.example.local_image_controller_final_project_backend.service;
 
+import com.example.local_image_controller_final_project_backend.exceptions.UnableToCreateAlbumModel;
 import com.example.local_image_controller_final_project_backend.model.AlbumModel;
 import com.example.local_image_controller_final_project_backend.repository.AlbumModelRepository;
 import org.springframework.stereotype.Service;
@@ -14,8 +15,12 @@ public class AlbumModelService {
         this.albumModelrepository = albumModelrepository;
     }
 
-    public void saveAlbumModelToDB(AlbumModel albumModel){
-        albumModelrepository.save(albumModel);
+    public void saveAlbumModelToDB(AlbumModel albumModel) throws UnableToCreateAlbumModel {
+        try {
+            albumModelrepository.save(albumModel);
+        }catch (Exception e){
+            throw new UnableToCreateAlbumModel("Album not saved. Error");
+        }
     }
 
     public List<AlbumModel> getAllAlbums() {

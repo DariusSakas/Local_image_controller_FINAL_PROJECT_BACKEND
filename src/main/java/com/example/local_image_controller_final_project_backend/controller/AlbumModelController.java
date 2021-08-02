@@ -1,5 +1,6 @@
 package com.example.local_image_controller_final_project_backend.controller;
 
+import com.example.local_image_controller_final_project_backend.exceptions.UnableToCreateAlbumModel;
 import com.example.local_image_controller_final_project_backend.model.AlbumModel;
 import com.example.local_image_controller_final_project_backend.service.AlbumModelService;
 import org.springframework.http.HttpStatus;
@@ -24,8 +25,14 @@ public class AlbumModelController {
 
     @PostMapping("/createAlbum")
     public ResponseEntity<String> saveAlbumModelToDB (@RequestBody AlbumModel albumModel){
-        System.out.println(albumModel.toString());
-        albumModelService.saveAlbumModelToDB(albumModel);
+
+        try {
+            System.out.println(albumModel.toString());
+            albumModelService.saveAlbumModelToDB(albumModel);
+        } catch (UnableToCreateAlbumModel e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("Unable to create an album", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
         return new ResponseEntity<>("Album saved to DB successfully", HttpStatus.OK);
     }
 

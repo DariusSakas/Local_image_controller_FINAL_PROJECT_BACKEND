@@ -19,6 +19,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/images")
@@ -53,17 +54,17 @@ public class ImageModelController {
         //2. Convert resource into media type defined in the HTTP specification
         MediaType mediaType = MediaTypeFactory.getMediaType(resource).orElse(MediaType.APPLICATION_OCTET_STREAM);
 
-        //3. Http request data structure. Allows to pass additional information with an HTTP
+        //3. Http request data structure. Allows passing additional information with an HTTP
         // request or response. HTTP headers are the name or value pairs that are displayed in the request
         // and response messages of message headers for HTTP:
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(mediaType);
 
         //4. attachment() - init browser download, inline() - init open in browser
-        ContentDisposition disposition = ContentDisposition.attachment().filename(resource.getFilename()).build();
+        ContentDisposition disposition = ContentDisposition.attachment().filename(Objects.requireNonNull(resource.getFilename())).build();
 
         //5. disposition - already built file with name and data to dispose.
-        // headers holds all multi part body data in http context
+        // header holds all multipart body data in http context
         headers.setContentDisposition(disposition);
 
         return new ResponseEntity<>(resource, headers, HttpStatus.OK);
@@ -80,7 +81,6 @@ public class ImageModelController {
 
         try {
             saveImageToStorageAndModelToDB(imageFile, imageModelJSON);
-
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity<>("Image and thumbnail upload failed", HttpStatus.BAD_REQUEST);
@@ -90,22 +90,25 @@ public class ImageModelController {
 
     @PostMapping("/uploadImages")
     public ResponseEntity<String> uploadImages(@RequestParam("imageFiles") MultipartFile[] imageFiles, @RequestParam("imageModelJSON") String imageModelJSON) {
-
         try {
-            Arrays.stream(imageFiles).forEach(multipartFile -> {
-                try {
-                    saveImageToStorageAndModelToDB(multipartFile, imageModelJSON);
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    System.out.println("Unable to save image model data to DB");
-                }
-            });
+            saveMultipleImagesIntoStorage(imageFiles, imageModelJSON);
         } catch (Exception e) {
             e.printStackTrace();
-            return new ResponseEntity<>("Images and thumbnail upload failed", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Images and thumbnail upload failed", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>("Images posted and thumbnail generated successfully", HttpStatus.OK);
+    }
+
+    private void saveMultipleImagesIntoStorage(MultipartFile[] imageFiles, String imageModelJSON) {
+        Arrays.stream(imageFiles).forEach(multipartFile -> {
+            try {
+                saveImageToStorageAndModelToDB(multipartFile, imageModelJSON);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println("Unable to save image model data to DB");
+            }
+        });
     }
 
     /**
@@ -121,9 +124,10 @@ public class ImageModelController {
         System.out.println(imageModel);
 
         imageModelService.saveImageDataToDB(imageModel);
-
     }
-
+    /**
+     * Map standard JSON into ImageModel object
+     */
     private ImageModel mapJsonIntoImageModel(String imageModelJSON) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         return  objectMapper.readValue(imageModelJSON, ImageModel.class);
@@ -135,26 +139,21 @@ public class ImageModelController {
     @PutMapping("/updateImage")
     public ResponseEntity<String> updateImageData(@RequestBody ImageModel imageModel) {
         try {
-            ImageModel imageModelFromDB = imageModelService.getImageModelById(imageModel.getId());
-            if (imageModelFromDB == null) {
-                throw new ImageModelDataNotFound("Cannot find such image data in DB");
-            }
+            imageModelService.saveImageDataToDB(imageModel);
         } catch (ImageModelDataNotFound e) {
             e.printStackTrace();
-            return new ResponseEntity<>("Cannot find such image data in DB", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Image data updated successfully", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        imageModelService.saveImageDataToDB(imageModel);
         return new ResponseEntity<>("Image data updated successfully", HttpStatus.OK);
     }
 
     @DeleteMapping("/{imageId}")
     public ResponseEntity<String> deleteImage(@PathVariable(name = "imageId") Long imageId) {
-
         try {
             deleteImageAndThumbnailFromStorage(imageId);
         } catch (Exception e) {
             e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>("Image removed", HttpStatus.OK);
     }
