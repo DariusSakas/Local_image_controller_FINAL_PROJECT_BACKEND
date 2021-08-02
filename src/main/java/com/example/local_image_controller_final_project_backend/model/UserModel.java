@@ -1,8 +1,7 @@
 package com.example.local_image_controller_final_project_backend.model;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "user_model",
@@ -13,16 +12,20 @@ public class UserModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(nullable = false)
     private String username;
+    @Column(nullable = false)
     private String password;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(	name = "user_roles",
-            joinColumns = @JoinColumn(name = "user_model_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_model_id"))
-    private Set<RoleModel> roles = new HashSet<>();
+    private String roles = "";
 
     public UserModel() {
+    }
+
+    public UserModel(String username, String password, String roles) {
+        this.username = username;
+        this.password = password;
+        this.roles = roles;
     }
 
     public UserModel(String username, String password) {
@@ -54,13 +57,14 @@ public class UserModel {
         this.password = password;
     }
 
-    public Set<RoleModel> getRoles() {
-        return roles;
+    public List<String> getRoles() {
+        if(this.roles.length() > 0){
+            return Arrays.asList(this.roles.split(","));
+        }
+        return new ArrayList<>();
     }
 
-    public void setRoles(Set<RoleModel> roles) {
-        this.roles = roles;
+    public void setRoles(List<String> rolesList) {
+        this.roles = String.join(", ", rolesList);
     }
-
-
 }

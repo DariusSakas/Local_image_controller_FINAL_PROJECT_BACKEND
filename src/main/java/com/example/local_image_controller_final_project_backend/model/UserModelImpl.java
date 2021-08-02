@@ -26,7 +26,7 @@ public class UserModelImpl implements UserDetails {
 
     public static UserModelImpl getUserModelImpl(UserModel userModel){
         List<GrantedAuthority> authorities = userModel.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName().name()))
+                .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
         return new UserModelImpl(
                 userModel.getId(),

@@ -21,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -68,7 +69,7 @@ public class UserModelAndAuthenticationController {
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@RequestBody SignUpRequest signUpRequest) {
 
-        Set<RoleModel> roles = new HashSet<>();
+        List<String> roles = new LinkedList<>();
         Set<String> signUpRequestRole = signUpRequest.getRole();
 
         //Check if UserName is taken (DB check)
@@ -84,36 +85,34 @@ public class UserModelAndAuthenticationController {
         if (signUpRequestRole == null) {
             RoleModel userRole = roleModelService.findRoleByName(ERole.ROLE_USER)
                     .orElseThrow(() -> new RuntimeException("EROOR! Role is not found at DB."));
-            roles.add(userRole);
+            roles.add(userRole.getName().toString());
         } else {
             signUpRequestRole.forEach(role -> {
                 switch (role) {
                     case "admin":
                         RoleModel adminRole = roleModelService.findRoleByName(ERole.ROLE_ADMIN)
-                                .orElseThrow(() -> new RuntimeException("EROOR! Role is not found at DB."));
-                        roles.add(adminRole);
+                                .orElseThrow(() -> new RuntimeException("Error! Role is not found at DB."));
+                        roles.add(adminRole.toString());
 
                         break;
                     case "mod":
                         RoleModel modRole = roleModelService.findRoleByName(ERole.ROLE_MODERATOR)
-                                .orElseThrow(() -> new RuntimeException("EROOR! Role is not found at DB."));
-                        roles.add(modRole);
+                                .orElseThrow(() -> new RuntimeException("Error! Role is not found at DB."));
+                        roles.add(modRole.getName().toString());
 
                         break;
                     default:
                         RoleModel userRole = roleModelService.findRoleByName(ERole.ROLE_USER)
-                                .orElseThrow(() -> new RuntimeException("EROOR! Role is not found at DB."));
-                        roles.add(userRole);
+                                .orElseThrow(() -> new RuntimeException("Error! Role is not found at DB."));
+                        roles.add(userRole.getName().toString());
                 }
             });
         }
-
 
         user.setRoles(roles);
         userModelService.saveUserToDB(user);
 
         return new ResponseEntity<>("User registered successfully!", HttpStatus.OK);
     }
-
 
 }

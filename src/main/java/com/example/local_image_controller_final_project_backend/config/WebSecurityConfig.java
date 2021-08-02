@@ -2,6 +2,7 @@ package com.example.local_image_controller_final_project_backend.config;
 
 import com.example.local_image_controller_final_project_backend.jwt.JWTAuthentication;
 import com.example.local_image_controller_final_project_backend.jwt.JWTFilter;
+import com.example.local_image_controller_final_project_backend.model.ERole;
 import com.example.local_image_controller_final_project_backend.service.UserModelDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,8 +19,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(
-        prePostEnabled = true)
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserModelDetailsService userModelService;
@@ -37,7 +37,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
+
         authenticationManagerBuilder.userDetailsService(userModelService).passwordEncoder(passwordEncoder());
+
     }
 
     @Bean
@@ -57,7 +59,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests().antMatchers("/auth/**").permitAll()
-                .antMatchers("/**").authenticated();
+                .antMatchers("/**").hasAnyRole("USER, ADMIN");
 
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);

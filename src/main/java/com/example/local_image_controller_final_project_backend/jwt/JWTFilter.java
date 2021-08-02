@@ -2,6 +2,7 @@ package com.example.local_image_controller_final_project_backend.jwt;
 
 import com.example.local_image_controller_final_project_backend.exceptions.JWTValidationException;
 import com.example.local_image_controller_final_project_backend.service.UserModelDetailsService;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,9 +23,9 @@ import java.io.IOException;
 public class JWTFilter extends OncePerRequestFilter {
 
     @Autowired
-    private  JWTUtils jwtUtils;
+    private JWTUtils jwtUtils;
     @Autowired
-    private  UserModelDetailsService userModelService;
+    private UserModelDetailsService userModelService;
 
     public JWTFilter() {
     }
@@ -44,22 +45,18 @@ public class JWTFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (Exception e) {
-            try {
-                throw new JWTValidationException("Unable to set authentication");
-            } catch (JWTValidationException ex) {
-                ex.printStackTrace();
-            }
+            e.printStackTrace();
         }
 
         filterChain.doFilter(httpServletRequest, httpServletResponse);
     }
+
     private String parseJWT(HttpServletRequest request) {
         String headerAuth = request.getHeader("Authorization");
 
         if (StringUtils.hasText(headerAuth) && headerAuth.startsWith("Bearer ")) {
             return headerAuth.substring(7);
         }
-
         return null;
     }
 }
