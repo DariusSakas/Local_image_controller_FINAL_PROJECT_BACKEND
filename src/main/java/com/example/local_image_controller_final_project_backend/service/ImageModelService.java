@@ -1,10 +1,8 @@
 package com.example.local_image_controller_final_project_backend.service;
 
-import com.example.local_image_controller_final_project_backend.exceptions.ImageModelDataNotFound;
+import com.example.local_image_controller_final_project_backend.exceptions.ModelDataNotFound;
 import com.example.local_image_controller_final_project_backend.model.ImageModel;
 import com.example.local_image_controller_final_project_backend.repository.ImageModelRepository;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,11 +18,10 @@ public class ImageModelService {
         this.imageModelRepository = imageModelRepository;
     }
 
-    public void saveImageDataToDB(ImageModel imageModel) throws ImageModelDataNotFound {
-
+    public void saveImageDataToDB(ImageModel imageModel) throws ModelDataNotFound {
         ImageModel imageModelFromDB = imageModelRepository.getById(imageModel.getId());
         if (imageModelFromDB == null) {
-            throw new ImageModelDataNotFound("Cannot find such image data in DB");
+            throw new ModelDataNotFound("Cannot find such image data in DB");
         }
         imageModelRepository.save(imageModel);
     }

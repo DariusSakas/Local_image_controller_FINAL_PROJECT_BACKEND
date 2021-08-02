@@ -1,6 +1,7 @@
 package com.example.local_image_controller_final_project_backend.controller;
 
-import com.example.local_image_controller_final_project_backend.exceptions.UnableToCreateAlbumModel;
+import com.example.local_image_controller_final_project_backend.exceptions.ModelDataNotFound;
+import com.example.local_image_controller_final_project_backend.exceptions.UnableToSaveModelDataToDB;
 import com.example.local_image_controller_final_project_backend.model.AlbumModel;
 import com.example.local_image_controller_final_project_backend.service.AlbumModelService;
 import org.springframework.http.HttpStatus;
@@ -29,17 +30,21 @@ public class AlbumModelController {
         try {
             System.out.println(albumModel.toString());
             albumModelService.saveAlbumModelToDB(albumModel);
-        } catch (UnableToCreateAlbumModel e) {
+        } catch (UnableToSaveModelDataToDB e) {
             e.printStackTrace();
-            return new ResponseEntity<>("Unable to create an album", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Unable to create the album", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>("Album saved to DB successfully", HttpStatus.OK);
     }
 
     @PutMapping("/updateAlbum")
     public ResponseEntity<String> updateAlbum( @RequestBody AlbumModel albumModel){
-        albumModelService.updateAlbum(albumModel);
-
+        try {
+            albumModelService.updateAlbum(albumModel);
+        } catch (ModelDataNotFound e) {
+            e.printStackTrace();
+            return new ResponseEntity<>("Unable to update the album", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
         return new ResponseEntity<>("Album updated", HttpStatus.OK);
     }
 

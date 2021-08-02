@@ -35,7 +35,7 @@ public class ImageStorageService {
      * returns String path to that image. CurrentFileName is checked with existing files and regenerated
      */
 
-    public String saveImageToLocalStorage(MultipartFile imageFile, String imagesStoragePath) throws Exception {
+    public String saveImageToLocalStorageAndGetPath(MultipartFile imageFile, String imagesStoragePath) throws Exception {
 
         setCurrentFileName(generateImageFileName(imagesStoragePath, imageFile.getOriginalFilename()));
 
@@ -85,7 +85,7 @@ public class ImageStorageService {
      * returns String path to that thumbnail
      */
 
-    public String createThumbnailImage(String imagesStoragePath, String thumbnailStoragePath) throws Exception {
+    public String createThumbnailImageAndGetPath(String imagesStoragePath, String thumbnailStoragePath) throws Exception {
         File newThumbnailFile = new File(thumbnailStoragePath);
 
         Thumbnails.of(String.format("%s/%s", imagesStoragePath, getCurrentFileName())).size(250, 250).toFiles(newThumbnailFile, Rename.PREFIX_HYPHEN_THUMBNAIL);

@@ -1,6 +1,7 @@
 package com.example.local_image_controller_final_project_backend.service;
 
-import com.example.local_image_controller_final_project_backend.exceptions.UnableToCreateAlbumModel;
+import com.example.local_image_controller_final_project_backend.exceptions.ModelDataNotFound;
+import com.example.local_image_controller_final_project_backend.exceptions.UnableToSaveModelDataToDB;
 import com.example.local_image_controller_final_project_backend.model.AlbumModel;
 import com.example.local_image_controller_final_project_backend.repository.AlbumModelRepository;
 import org.springframework.stereotype.Service;
@@ -15,11 +16,11 @@ public class AlbumModelService {
         this.albumModelrepository = albumModelrepository;
     }
 
-    public void saveAlbumModelToDB(AlbumModel albumModel) throws UnableToCreateAlbumModel {
+    public void saveAlbumModelToDB(AlbumModel albumModel) throws UnableToSaveModelDataToDB {
         try {
             albumModelrepository.save(albumModel);
         }catch (Exception e){
-            throw new UnableToCreateAlbumModel("Album not saved. Error");
+            throw new UnableToSaveModelDataToDB("Album not saved. Error");
         }
     }
 
@@ -27,7 +28,11 @@ public class AlbumModelService {
         return albumModelrepository.findAll();
     }
 
-    public void updateAlbum(AlbumModel albumModel) {
+    public void updateAlbum(AlbumModel albumModel) throws ModelDataNotFound {
+        AlbumModel albumModelToSave = albumModelrepository.findById(albumModel.getId()).orElse(null);
+        if (albumModelToSave == null) {
+            throw new ModelDataNotFound("Cannot find such album data in DB");
+        }
         albumModelrepository.save(albumModel);
     }
 

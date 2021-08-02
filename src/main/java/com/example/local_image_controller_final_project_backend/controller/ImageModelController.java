@@ -1,7 +1,7 @@
 package com.example.local_image_controller_final_project_backend.controller;
 
 import com.example.local_image_controller_final_project_backend.config.LocalStoragePath;
-import com.example.local_image_controller_final_project_backend.exceptions.ImageModelDataNotFound;
+import com.example.local_image_controller_final_project_backend.exceptions.ModelDataNotFound;
 import com.example.local_image_controller_final_project_backend.model.ImageModel;
 import com.example.local_image_controller_final_project_backend.repository.AlbumModelRepository;
 import com.example.local_image_controller_final_project_backend.service.ImageModelService;
@@ -103,7 +103,6 @@ public class ImageModelController {
         Arrays.stream(imageFiles).forEach(multipartFile -> {
             try {
                 saveImageToStorageAndModelToDB(multipartFile, imageModelJSON);
-
             } catch (Exception e) {
                 e.printStackTrace();
                 System.out.println("Unable to save image model data to DB");
@@ -117,11 +116,11 @@ public class ImageModelController {
     private void saveImageToStorageAndModelToDB(MultipartFile imageFile, String imageModelJSON) throws Exception {
         ImageModel imageModel = mapJsonIntoImageModel(imageModelJSON);
 
-        imageModel.setImageFileStorageLocation(imageStorageService.saveImageToLocalStorage(imageFile, LocalStoragePath.getImagesStoragePath()));
-        imageModel.setImageThumbnailFileStorageLocation(imageStorageService.createThumbnailImage(LocalStoragePath.getImagesStoragePath(), LocalStoragePath.getThumbnailStoragePath()));
+        String imageFileStorageLocation = imageStorageService.saveImageToLocalStorageAndGetPath(imageFile, LocalStoragePath.getImagesStoragePath());
+        String thumbnailImageStorageLocation = imageStorageService.createThumbnailImageAndGetPath(LocalStoragePath.getImagesStoragePath(), LocalStoragePath.getThumbnailStoragePath());
 
-        System.out.println(imageModelJSON);
-        System.out.println(imageModel);
+        imageModel.setImageFileStorageLocation(imageFileStorageLocation);
+        imageModel.setImageThumbnailFileStorageLocation(thumbnailImageStorageLocation);
 
         imageModelService.saveImageDataToDB(imageModel);
     }
@@ -140,7 +139,7 @@ public class ImageModelController {
     public ResponseEntity<String> updateImageData(@RequestBody ImageModel imageModel) {
         try {
             imageModelService.saveImageDataToDB(imageModel);
-        } catch (ImageModelDataNotFound e) {
+        } catch (ModelDataNotFound e) {
             e.printStackTrace();
             return new ResponseEntity<>("Image data updated successfully", HttpStatus.INTERNAL_SERVER_ERROR);
         }
