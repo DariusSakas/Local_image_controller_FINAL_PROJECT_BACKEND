@@ -1,6 +1,5 @@
 package com.example.local_image_controller_final_project_backend.controller;
 
-import com.example.local_image_controller_final_project_backend.exceptions.UserAlreadyTakenException;
 import com.example.local_image_controller_final_project_backend.jwt.JWTUtils;
 import com.example.local_image_controller_final_project_backend.jwt.jwtModel.JWTResponse;
 import com.example.local_image_controller_final_project_backend.jwt.jwtModel.LoginRequest;
@@ -18,7 +17,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
